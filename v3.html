@@ -208,6 +208,7 @@ table.cal td:last-child{border-inline-end:1px solid var(--line-2);border-start-e
 .insteps li{display:flex;gap:12px;align-items:flex-start;color:#fff}
 .insteps b{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid #E8D7BC;color:#E8D7BC;display:grid;place-items:center;font-size:13px}
 .insteps strong{display:block;font-size:15px}.insteps em{display:block;font-style:normal;color:#CFC8BD;font-size:13px;margin-top:2px}
+.inalt{display:block;text-align:center;margin-top:14px;color:#E8D7BC;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .intips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}.intips span{font-size:12px;color:#EDE4D6;border:1px solid rgba(232,215,188,.4);border-radius:999px;padding:5px 10px}
 @media (max-width:860px){.capture .stage{aspect-ratio:auto;height:78vh;max-height:720px}}
 .hdcard{margin-top:16px;padding:16px;border-radius:14px;background:#F7EEE9;border:1px solid #EAD9CD}.hdcard b{color:var(--copper-deep)}.hdcard p{margin-top:4px;color:var(--ink-2)}
@@ -351,6 +352,7 @@ table.cal td:last-child{border-inline-end:1px solid var(--line-2);border-start-e
           </ol>
           <div class="intips"><span data-i="tip1"></span><span data-i="tip2"></span><span data-i="tip3"></span></div>
           <button class="btn copper" id="inGo" style="width:100%;margin-top:18px" data-i="inGo"></button>
+          <label for="file" class="inalt" data-i="inUpload"></label>
         </div>
       </div>
     </div>
@@ -362,7 +364,7 @@ table.cal td:last-child{border-inline-end:1px solid var(--line-2);border-start-e
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px"><label for="fileCam" class="btn copper sm" style="cursor:pointer" data-i="hdGo"></label><button class="link" id="hdSkip" data-i="hdSkip"></button></div></div>
       <div id="ghostNote" class="small" style="color:var(--copper);margin-top:10px" hidden data-i="ghostNote"></div>
       <div style="display:grid;gap:10px;margin-top:20px">
-        <button class="btn" id="btnCam" data-i="ctaCamera"></button>
+        <button class="btn" id="btnCam" data-i="ctaCamera" hidden></button>
         <div class="or" data-i="or"></div>
         <label class="btn ghost" for="file" style="cursor:pointer" data-i="ctaUpload"></label>
         <input type="file" id="file" accept="image/*,.heic,.heif" hidden>
@@ -875,7 +877,7 @@ fr:{
  navJournal:"Mon journal",
  heroTitle:"Votre peau est unique.<br>Votre soin devrait l'être aussi.",
  heroLede:"Une lecture zone par zone des signes visibles de votre visage, un protocole KŌSMOPELLIS dosé au sachet près, et un journal qui suit votre rituel dans le temps.",
- heroFront:"FRONT",heroEyes:"YEUX",heroLips:"LÈVRES",ctaNativeCam:"Prendre un selfie",camBlocked:"Vidéo en direct non autorisée ici — touchez « Prendre un selfie » pour utiliser l'appareil photo du téléphone.",h_lightSoft:"Lumière inégale — idéalement face à une fenêtre (on continue)",inTitle:"Scan guidé · 15 secondes",inHead:"Trois gestes simples",in1t:"Regardez l'objectif",in1:"Restez immobile 2 secondes.",in2t:"Tournez la tête",in2:"Lentement vers la gauche, puis vers la droite.",in3t:"Levez puis baissez le menton",in3:"Un petit mouvement suffit.",tip1:"Face à une fenêtre",tip2:"Sans lunettes",tip3:"Cheveux dégagés",inGo:"C'est parti",g1:"Étape 1 / 3",g2:"Étape 2 / 3",g3:"Étape 3 / 3",gHold:"Regardez l'objectif, ne bougez plus",gLeft:"Tournez lentement vers la gauche",gRight:"Maintenant vers la droite",gMore:"Encore un peu plus…",gLevel:"Gardez le menton droit",gUp:"Levez légèrement le menton",gDown:"Puis baissez-le doucement",gBack:"Revenez doucement face à l'objectif",hdTitle:"Dernière étape (recommandée) : une photo HD",hdText:"Votre téléphone prend une photo en pleine résolution — 3 à 4 fois plus de détails pour les ridules. Tenez-le à hauteur des yeux, face à la lumière.",hdGo:"Prendre la photo HD",hdSkip:"Passer",hdAdded:"Photo HD ajoutée à votre scan.",gStill:"Ne bougez plus un instant…",h_backlit:"Contre-jour : placez-vous face à la fenêtre, dos au mur",gEither:"Tournez lentement la tête d'un côté",gOther:"Maintenant de l'autre côté",tickErr:"Le suivi du visage a un souci — touchez « Terminer avec ces vues » ou importez une photo.",ctaStart:"Analyser ma peau",ctaTech:"Notre méthode",
+ heroFront:"FRONT",heroEyes:"YEUX",heroLips:"LÈVRES",ctaNativeCam:"Prendre un selfie",camBlocked:"Vidéo en direct non autorisée ici — touchez « Prendre un selfie » pour utiliser l'appareil photo du téléphone.",h_lightSoft:"Lumière inégale — idéalement face à une fenêtre (on continue)",inTitle:"Scan guidé · 15 secondes",inHead:"Trois gestes simples",in1t:"Regardez l'objectif",in1:"Restez immobile 2 secondes.",in2t:"Tournez la tête",in2:"Lentement vers la gauche, puis vers la droite.",in3t:"Levez puis baissez le menton",in3:"Un petit mouvement suffit.",tip1:"Face à une fenêtre",tip2:"Sans lunettes",tip3:"Cheveux dégagés",inGo:"C'est parti",g1:"Étape 1 / 3",g2:"Étape 2 / 3",g3:"Étape 3 / 3",gHold:"Regardez l'objectif, ne bougez plus",gLeft:"Tournez lentement vers la gauche",gRight:"Maintenant vers la droite",gMore:"Encore un peu plus…",gLevel:"Gardez le menton droit",gUp:"Levez légèrement le menton",gDown:"Puis baissez-le doucement",gBack:"Revenez doucement face à l'objectif",hdTitle:"Dernière étape (recommandée) : une photo HD",hdText:"Votre téléphone prend une photo en pleine résolution — 3 à 4 fois plus de détails pour les ridules. Tenez-le à hauteur des yeux, face à la lumière.",hdGo:"Prendre la photo HD",hdSkip:"Passer",hdAdded:"Photo HD ajoutée à votre scan.",gStill:"Ne bougez plus un instant…",h_backlit:"Contre-jour : placez-vous face à la fenêtre, dos au mur",gEither:"Tournez lentement la tête d'un côté",gOther:"Maintenant de l'autre côté",tickErr:"Le suivi du visage a un souci — touchez « Terminer avec ces vues » ou importez une photo.",inUpload:"ou importer une photo",ctaStart:"Analyser ma peau",ctaTech:"Notre méthode",
  trust1:"Analyse dans votre navigateur",trust2:"Photo jamais conservée par défaut",trust3:"Confiance affichée pour chaque zone",
  how1t:"Votre profil",how1:"Quelques informations et vos consentements, séparés et explicites.",
  how2t:"Votre photo",how2:"Un coach en direct vérifie lumière, angle et distance avant la capture.",
@@ -891,7 +893,7 @@ fr:{
  c2b:"Facultatif —",c2:"J'accepte de recevoir les conseils, nouveautés et offres personnalisées de KŌSMOPELLIS.",
  ctaContinue:"Continuer vers mon analyse",
  eName:"Indiquez votre nom.",eEmail:"Email invalide.",ePhone:"Numéro au format international (+33…).",eAge:"Âge entre 16 et 99 ans.",eC1:"Ce consentement est nécessaire à l'analyse.",
- stepPhoto:"Étape 2 · Photo",capTitle:"Une photo suffit pour commencer.",capLede:"De face, en lumière naturelle, sans maquillage ni filtre.",
+ stepPhoto:"Étape 2 · Photo",capTitle:"Votre scan guidé.",capLede:"15 secondes, en lumière naturelle, sans maquillage ni filtre.",
  stageEmpty:"Activez la caméra ou importez une photo",
  coachTitle:"Coach de prise de vue",coachLede:"Chaque critère conditionne la fiabilité de votre résultat.",
  ck_face:"Un seul visage",ck_pose:"Visage de face",ck_tilt:"Tête droite",ck_dist:"Distance",ck_light:"Lumière homogène",ck_exp:"Exposition",ck_resolution:"Résolution",ck_pose2:"Angle",ck_tilt2:"Inclinaison",ck_exposure:"Exposition",ck_evenLight:"Lumière homogène",ck_sharpness:"Netteté",
@@ -957,7 +959,7 @@ en:{
  navJournal:"My journal",
  heroTitle:"Your skin is unique.<br>Your care should be too.",
  heroLede:"A zone-by-zone reading of the visible signs on your face, a KŌSMOPELLIS protocol dosed to the sachet, and a journal that follows your ritual over time.",
- heroFront:"FOREHEAD",heroEyes:"EYES",heroLips:"LIPS",ctaNativeCam:"Take a selfie",camBlocked:"Live video isn't allowed here — tap “Take a selfie” to use your phone camera.",h_lightSoft:"Uneven light — ideally face a window (continuing)",inTitle:"Guided scan · 15 seconds",inHead:"Three simple moves",in1t:"Look at the lens",in1:"Hold still for 2 seconds.",in2t:"Turn your head",in2:"Slowly to the left, then to the right.",in3t:"Lift then lower your chin",in3:"A small movement is enough.",tip1:"Face a window",tip2:"No glasses",tip3:"Hair off your face",inGo:"Let's go",g1:"Step 1 / 3",g2:"Step 2 / 3",g3:"Step 3 / 3",gHold:"Look at the lens and hold still",gLeft:"Slowly turn to your left",gRight:"Now to your right",gMore:"A little further…",gLevel:"Keep your chin level",gUp:"Lift your chin slightly",gDown:"Then lower it gently",gBack:"Come back gently towards the lens",hdTitle:"Last step (recommended): one HD photo",hdText:"Your phone takes a full-resolution photo — 3 to 4 times more detail for fine lines. Hold it at eye level, facing the light.",hdGo:"Take the HD photo",hdSkip:"Skip",hdAdded:"HD photo added to your scan.",gStill:"Hold still for a moment…",h_backlit:"Backlit: face the window, with the wall behind you",gEither:"Slowly turn your head to one side",gOther:"Now to the other side",tickErr:"Face tracking hit a problem — tap “Finish with these views” or upload a photo.",ctaStart:"Analyse my skin",ctaTech:"Our method",
+ heroFront:"FOREHEAD",heroEyes:"EYES",heroLips:"LIPS",ctaNativeCam:"Take a selfie",camBlocked:"Live video isn't allowed here — tap “Take a selfie” to use your phone camera.",h_lightSoft:"Uneven light — ideally face a window (continuing)",inTitle:"Guided scan · 15 seconds",inHead:"Three simple moves",in1t:"Look at the lens",in1:"Hold still for 2 seconds.",in2t:"Turn your head",in2:"Slowly to the left, then to the right.",in3t:"Lift then lower your chin",in3:"A small movement is enough.",tip1:"Face a window",tip2:"No glasses",tip3:"Hair off your face",inGo:"Let's go",g1:"Step 1 / 3",g2:"Step 2 / 3",g3:"Step 3 / 3",gHold:"Look at the lens and hold still",gLeft:"Slowly turn to your left",gRight:"Now to your right",gMore:"A little further…",gLevel:"Keep your chin level",gUp:"Lift your chin slightly",gDown:"Then lower it gently",gBack:"Come back gently towards the lens",hdTitle:"Last step (recommended): one HD photo",hdText:"Your phone takes a full-resolution photo — 3 to 4 times more detail for fine lines. Hold it at eye level, facing the light.",hdGo:"Take the HD photo",hdSkip:"Skip",hdAdded:"HD photo added to your scan.",gStill:"Hold still for a moment…",h_backlit:"Backlit: face the window, with the wall behind you",gEither:"Slowly turn your head to one side",gOther:"Now to the other side",tickErr:"Face tracking hit a problem — tap “Finish with these views” or upload a photo.",inUpload:"or upload a photo",ctaStart:"Analyse my skin",ctaTech:"Our method",
  trust1:"Analysis runs in your browser",trust2:"Photo never kept by default",trust3:"Confidence shown for every zone",
  how1t:"Your profile",how1:"A few details and your consents — separate and explicit.",
  how2t:"Your photo",how2:"A live coach checks light, angle and distance before capture.",
@@ -973,7 +975,7 @@ en:{
  c2b:"Optional —",c2:"I agree to receive KŌSMOPELLIS advice, news and personalised offers.",
  ctaContinue:"Continue to my analysis",
  eName:"Please enter your name.",eEmail:"Invalid email.",ePhone:"International format please (+44…).",eAge:"Age between 16 and 99.",eC1:"This consent is required for the analysis.",
- stepPhoto:"Step 2 · Photo",capTitle:"One photo is all it takes.",capLede:"Facing the camera, in natural light, without make-up or filters.",
+ stepPhoto:"Step 2 · Photo",capTitle:"Your guided scan.",capLede:"15 seconds, in natural light, without make-up or filters.",
  stageEmpty:"Turn on the camera or upload a photo",
  coachTitle:"Capture coach",coachLede:"Each criterion determines how reliable your result will be.",
  ck_face:"One face",ck_pose:"Facing forward",ck_tilt:"Head straight",ck_dist:"Distance",ck_light:"Even light",ck_exp:"Exposure",ck_resolution:"Resolution",ck_pose2:"Angle",ck_tilt2:"Tilt",ck_exposure:"Exposure",ck_evenLight:"Even light",ck_sharpness:"Sharpness",
@@ -1039,7 +1041,7 @@ ar:{
  navJournal:"سجلّي",
  heroTitle:"بشرتك فريدة.<br>ويجب أن تكون عنايتك كذلك.",
  heroLede:"قراءة لكل منطقة من العلامات الظاهرة على وجهك، وبروتوكول KŌSMOPELLIS محسوب بدقة الكيس الواحد، وسجلّ يتابع روتينك مع الوقت.",
- heroFront:"الجبهة",heroEyes:"العيون",heroLips:"الشفاه",ctaNativeCam:"التقاط صورة سيلفي",camBlocked:"البث المباشر غير مسموح هنا — المسي «التقاط صورة سيلفي» لاستخدام كاميرا الهاتف.",h_lightSoft:"إضاءة غير متساوية — يفضل مواجهة نافذة (نواصل)",inTitle:"مسح موجَّه · 15 ثانية",inHead:"ثلاث حركات بسيطة",in1t:"انظري إلى العدسة",in1:"ابقي ثابتة لثانيتين.",in2t:"أديري رأسك",in2:"ببطء إلى اليسار ثم إلى اليمين.",in3t:"ارفعي ذقنك ثم اخفضيه",in3:"حركة بسيطة تكفي.",tip1:"مقابل نافذة",tip2:"بدون نظارات",tip3:"الشعر بعيداً عن الوجه",inGo:"لنبدأ",g1:"الخطوة 1 / 3",g2:"الخطوة 2 / 3",g3:"الخطوة 3 / 3",gHold:"انظري إلى العدسة ولا تتحركي",gLeft:"استديري ببطء إلى اليسار",gRight:"الآن إلى اليمين",gMore:"قليلاً بعد…",gLevel:"حافظي على استقامة الذقن",gUp:"ارفعي ذقنك قليلاً",gDown:"ثم اخفضيه بلطف",gBack:"عودي بهدوء نحو العدسة",hdTitle:"الخطوة الأخيرة (موصى بها): صورة عالية الدقة",hdText:"يلتقط هاتفك صورة بدقة كاملة — تفاصيل أكثر بـ3 إلى 4 مرات للخطوط الدقيقة. أمسكيه بمستوى العينين ومواجهة الضوء.",hdGo:"التقاط الصورة عالية الدقة",hdSkip:"تخطي",hdAdded:"أضيفت الصورة عالية الدقة إلى المسح.",gStill:"لا تتحركي للحظة…",h_backlit:"إضاءة خلفية: واجهي النافذة والجدار خلفك",gEither:"أديري رأسك ببطء إلى جانب",gOther:"الآن إلى الجانب الآخر",tickErr:"واجه تتبع الوجه مشكلة — المسي «إنهاء بهذه الصور» أو ارفعي صورة.",ctaStart:"حلّلي بشرتي",ctaTech:"منهجيتنا",
+ heroFront:"الجبهة",heroEyes:"العيون",heroLips:"الشفاه",ctaNativeCam:"التقاط صورة سيلفي",camBlocked:"البث المباشر غير مسموح هنا — المسي «التقاط صورة سيلفي» لاستخدام كاميرا الهاتف.",h_lightSoft:"إضاءة غير متساوية — يفضل مواجهة نافذة (نواصل)",inTitle:"مسح موجَّه · 15 ثانية",inHead:"ثلاث حركات بسيطة",in1t:"انظري إلى العدسة",in1:"ابقي ثابتة لثانيتين.",in2t:"أديري رأسك",in2:"ببطء إلى اليسار ثم إلى اليمين.",in3t:"ارفعي ذقنك ثم اخفضيه",in3:"حركة بسيطة تكفي.",tip1:"مقابل نافذة",tip2:"بدون نظارات",tip3:"الشعر بعيداً عن الوجه",inGo:"لنبدأ",g1:"الخطوة 1 / 3",g2:"الخطوة 2 / 3",g3:"الخطوة 3 / 3",gHold:"انظري إلى العدسة ولا تتحركي",gLeft:"استديري ببطء إلى اليسار",gRight:"الآن إلى اليمين",gMore:"قليلاً بعد…",gLevel:"حافظي على استقامة الذقن",gUp:"ارفعي ذقنك قليلاً",gDown:"ثم اخفضيه بلطف",gBack:"عودي بهدوء نحو العدسة",hdTitle:"الخطوة الأخيرة (موصى بها): صورة عالية الدقة",hdText:"يلتقط هاتفك صورة بدقة كاملة — تفاصيل أكثر بـ3 إلى 4 مرات للخطوط الدقيقة. أمسكيه بمستوى العينين ومواجهة الضوء.",hdGo:"التقاط الصورة عالية الدقة",hdSkip:"تخطي",hdAdded:"أضيفت الصورة عالية الدقة إلى المسح.",gStill:"لا تتحركي للحظة…",h_backlit:"إضاءة خلفية: واجهي النافذة والجدار خلفك",gEither:"أديري رأسك ببطء إلى جانب",gOther:"الآن إلى الجانب الآخر",tickErr:"واجه تتبع الوجه مشكلة — المسي «إنهاء بهذه الصور» أو ارفعي صورة.",inUpload:"أو ارفعي صورة",ctaStart:"حلّلي بشرتي",ctaTech:"منهجيتنا",
  trust1:"التحليل داخل متصفحك",trust2:"لا نحتفظ بالصورة افتراضياً",trust3:"درجة الموثوقية لكل منطقة",
  how1t:"ملفك",how1:"بعض المعلومات وموافقاتك، منفصلة وصريحة.",
  how2t:"صورتك",how2:"مدرّب مباشر يتحقق من الإضاءة والزاوية والمسافة قبل الالتقاط.",
@@ -1055,7 +1057,7 @@ ar:{
  c2b:"اختياري —",c2:"أوافق على تلقي نصائح KŌSMOPELLIS وجديدها وعروضها المخصصة.",
  ctaContinue:"المتابعة إلى التحليل",
  eName:"يرجى إدخال الاسم.",eEmail:"بريد غير صالح.",ePhone:"بالصيغة الدولية (+971…).",eAge:"العمر بين 16 و99.",eC1:"هذه الموافقة ضرورية للتحليل.",
- stepPhoto:"الخطوة 2 · الصورة",capTitle:"صورة واحدة تكفي للبدء.",capLede:"من الأمام، في ضوء طبيعي، بدون مكياج أو فلاتر.",
+ stepPhoto:"الخطوة 2 · الصورة",capTitle:"مسحك الموجَّه.",capLede:"15 ثانية، في ضوء طبيعي، بدون مكياج أو فلاتر.",
  stageEmpty:"شغّلي الكاميرا أو ارفعي صورة",
  coachTitle:"مدرّب التصوير",coachLede:"كل معيار يحدد موثوقية نتيجتك.",
  ck_face:"وجه واحد",ck_pose:"الوجه للأمام",ck_tilt:"الرأس مستقيم",ck_dist:"المسافة",ck_light:"إضاءة متجانسة",ck_exp:"التعريض",ck_resolution:"الدقة",ck_pose2:"الزاوية",ck_tilt2:"الميل",ck_exposure:"التعريض",ck_evenLight:"إضاءة متجانسة",ck_sharpness:"الوضوح",
@@ -1192,6 +1194,7 @@ const MAXDIM=2048;   // keep pixels: the engine crops the face itself
 function lastFraming(){const j=Journal.load(); const e=j.entries[j.entries.length-1]; return e&&e.framing&&e.camera?e.framing:null;}
 function prepCapture(){
   renderChecks(null);
+  if(!S.photo&&!stream){ showIntroCard(); }
   document.getElementById("ghostNote").hidden=!lastFraming();
   if(window.KOSMO_CV) KOSMO_CV.FaceLocator.init();   // warm the model
 }
@@ -1209,7 +1212,7 @@ function cameraAllowedHere(){
   return true;
 }
 let CAM_NATIVE=false;
-function switchToNativeCam(){ CAM_NATIVE=true; const b=document.getElementById("btnCam"); b.dataset.i="ctaNativeCam"; b.textContent=t("ctaNativeCam"); }
+function switchToNativeCam(){ CAM_NATIVE=true; const b=document.getElementById("btnCam"); b.hidden=false; b.dataset.i="ctaNativeCam"; b.textContent=t("ctaNativeCam"); }
 document.getElementById("btnCam").addEventListener("click",()=>{
   if(CAM_NATIVE){ document.getElementById("fileCam").click(); return; }
   // Where live video is blocked (embedded viewer, old browser, http), open the phone's native camera instead — synchronously, inside the tap.
@@ -1217,12 +1220,17 @@ document.getElementById("btnCam").addEventListener("click",()=>{
   showIntro();
 });
 let INTRO_SEEN=false;
+function showIntroCard(){ document.getElementById("stageEmpty").hidden=true; document.getElementById("intro").hidden=false; document.getElementById("btnCam").hidden=!CAM_NATIVE; }
 function showIntro(){
   const stage=document.getElementById("stage"); stage.scrollIntoView({behavior:"smooth",block:"center"});
   if(INTRO_SEEN){ startCamera(); return; }
   document.getElementById("stageEmpty").hidden=true; document.getElementById("intro").hidden=false;
 }
-document.getElementById("inGo").addEventListener("click",()=>{ INTRO_SEEN=true; document.getElementById("intro").hidden=true; startCamera(); });
+document.getElementById("inGo").addEventListener("click",()=>{
+  INTRO_SEEN=true; document.getElementById("intro").hidden=true;
+  if(CAM_NATIVE||!cameraAllowedHere()){ switchToNativeCam(); document.getElementById("btnCam").hidden=false; document.getElementById("stageEmpty").hidden=false; document.getElementById("fileCam").click(); return; }
+  startCamera();
+});
 let NATIVE_FINAL=false;
 function hideHD(){ NATIVE_FINAL=false; const c=document.getElementById("hdCard"); if(c) c.hidden=true; }
 document.getElementById("fileCam").addEventListener("change",async e=>{
@@ -1422,13 +1430,13 @@ document.getElementById("file").addEventListener("change",async e=>{
 });
 function loadScript(src){return new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`))return res();const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
 function setPhoto(url,w,h){
-  S.photo={url,w,h}; if(!SW.on) {} 
+  S.photo={url,w,h}; document.getElementById("intro").hidden=true; if(!SW.on) {} 
   preview.src=url; preview.hidden=false; document.getElementById("stageEmpty").hidden=true;
   document.getElementById("hint").textContent=t("photoReady");
   document.getElementById("btnAnalyze").disabled=false; document.getElementById("btnRetake").hidden=false;
   renderChecks(null);
 }
-document.getElementById("btnRetake").addEventListener("click",()=>{S.photo=null;preview.hidden=true;document.getElementById("stageEmpty").hidden=false;document.getElementById("btnAnalyze").disabled=true;document.getElementById("btnRetake").hidden=true;document.getElementById("hint").textContent="";});
+document.getElementById("btnRetake").addEventListener("click",()=>{S.photo=null;S.frames=null;hideHD();preview.hidden=true;if(CAM_NATIVE)document.getElementById("stageEmpty").hidden=false;else showIntroCard();document.getElementById("btnAnalyze").disabled=true;document.getElementById("btnRetake").hidden=true;document.getElementById("hint").textContent="";});
 document.getElementById("hdSkip").addEventListener("click",()=>{ hideHD(); document.getElementById("btnAnalyze").scrollIntoView({behavior:"smooth",block:"center"}); });
 document.getElementById("btnAnalyze").addEventListener("click",()=>{ if(S.photo) go("self"); });
 
