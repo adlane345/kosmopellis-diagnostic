@@ -1319,7 +1319,7 @@ async function liveTickInner(){
       list=Object.keys(st).map(k=>({key:k,status:st[k]}));
       hint= st.pose!=="pass"?t("h_pose"): st.tilt!=="pass"?t("h_tilt"): st.dist!=="pass"?(fr?t("h_ghost"):iodF<0.17?t("h_far"):t("h_near")): st.exp==="fail"?(L.mean<=85?t("h_dark"):t("h_bright")): L.backlit?t("h_backlit"): st.light==="fail"?t("h_lightSoft"): t("h_hold");
       allOk=list.every(c=>c.status==="pass");
-      ctx.fillStyle="rgba(255,255,255,.85)";[p.pupR,p.pupL,p.nose,p.mR,p.mL].forEach(q=>{const[a,b]=P(q);ctx.beginPath();ctx.arc(a,b,2.2*devicePixelRatio,0,7);ctx.fill();});
+      if(DEBUG){ctx.fillStyle="rgba(255,255,255,.85)";[p.pupR,p.pupL,p.nose,p.mR,p.mL].forEach(q=>{const[a,b]=P(q);ctx.beginPath();ctx.arc(a,b,2.2*devicePixelRatio,0,7);ctx.fill();});}
     }
     renderChecks(list); document.getElementById("hint").textContent=hint; if(SW.on) renderSweep(false);
     document.getElementById("oval").classList.toggle("good",allOk);
