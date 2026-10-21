@@ -98,7 +98,8 @@ input:focus,select:focus{outline:none;border-color:var(--copper)}
 .stage video{transform:scaleX(-1)}
 .stage canvas.hud{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .stage .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#d9d2c8;gap:14px;text-align:center;padding:24px}
-.stage .oval{position:absolute;left:50%;top:47%;width:58%;height:64%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px dashed rgba(255,255,255,.55);pointer-events:none;transition:border-color .3s,left .18s linear,top .18s linear,width .18s linear,height .18s linear}
+.stage .oval{position:absolute;left:50%;top:47%;width:58%;height:64%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px dashed rgba(255,255,255,.55);pointer-events:none;transition:border-color .3s;will-change:transform}
+.stage .oval.trk{left:0;top:0}
 .stage .oval.good{border:2px solid #E8D7BC}
 .stage .hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:#fff;font-size:14px;letter-spacing:.04em;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 .coach{padding:24px}
@@ -766,9 +767,13 @@ window.PATCH_ART={"eye":[{"d":"M 309.05 66.51 C 301.84 66.76 294.62 67.37 287.48
     return analyzeLocated(img,{ok:true,faceCount:1,source:"manual",yaw:0,boxes:boxesFromEyes(L,R),pts:pts}, opts);
   }
   /* Live camera: landmarks only (fast) for the capture coach */
+  var LIVE_DIM=480, LIVE_C=null;
   async function KOSMO_LIVE(videoEl){
     if(!FaceLocator.ready) await FaceLocator.init();
-    var r=await FaceLocator.raw(videoEl); if(!r) return null;
+    // Downscale the live frame before FaceMesh: a 1920×1440 texture upload per tick is what stalls phones.
+    var vw=videoEl.videoWidth||videoEl.width, vh=videoEl.videoHeight||videoEl.height, src=videoEl;
+    if(vw&&vh&&Math.max(vw,vh)>LIVE_DIM){ var s=LIVE_DIM/Math.max(vw,vh); var c=LIVE_C||(LIVE_C=document.createElement("canvas")); var w=Math.round(vw*s), h=Math.round(vh*s); if(c.width!==w||c.height!==h){c.width=w;c.height=h;} c.getContext("2d").drawImage(videoEl,0,0,w,h); src=c; }
+    var r=await FaceLocator.raw(src); if(!r) return null;
     var f=r.multiFaceLandmarks||[]; if(f.length!==1) return {faceCount:f.length};
     var d=describeFace(f[0]); return {faceCount:1, yaw:d.yaw, pitch:d.pitch, pts:d.pts, boxes:d.boxes};
   }
@@ -899,7 +904,7 @@ fr:{
  ck_face:"Un seul visage",ck_pose:"Visage de face",ck_tilt:"Tête droite",ck_dist:"Distance",ck_light:"Lumière homogène",ck_exp:"Exposition",ck_resolution:"Résolution",ck_pose2:"Angle",ck_tilt2:"Inclinaison",ck_exposure:"Exposition",ck_evenLight:"Lumière homogène",ck_sharpness:"Netteté",
  h_noface:"Placez votre visage dans l'ovale",h_multi:"Une seule personne, s'il vous plaît",h_pose:"Regardez droit vers l'objectif",h_tilt:"Redressez légèrement la tête",h_far:"Rapprochez-vous",h_near:"Reculez légèrement",h_light:"Tournez-vous vers la lumière",h_dark:"Cherchez plus de lumière",h_bright:"Lumière trop forte",h_hold:"Parfait — ne bougez plus",h_ghost:"Alignez vos yeux sur les repères",
  ghostNote:"Repères de votre dernière analyse affichés : alignez-vous pour une comparaison fiable.",
- swTitle:"Scan multi-angles",swFront:"Vues de face (4)",swSides:"Profils trois-quarts",swTilt:"Haut / bas",swNow:"en cours",swHoldFront:"Restez de face un instant…",swTurn:"Tournez lentement la tête d'un côté…",swTurnOther:"…puis de l'autre côté",swTilt2:"Levez légèrement le menton…",swTiltOther:"…puis baissez-le",swDone:"Scan terminé : {f} vues de face, {s} profils.",readings:"{n} lectures · accord {a}%",sideViews:"inclut un profil",certMulti:"Scan multi-angles : {f} vues de face + {s} profils",camNative:"Ouverture de l'appareil photo du téléphone…",camDenied:"Accès caméra refusé — autorisez-le dans les réglages du navigateur, ou importez une photo.",ctaShoot:"Terminer avec ces vues",ctaCamera:"Lancer le scan caméra",or:"ou",ctaUpload:"Importer une photo",ctaAnalyze:"Lancer l'analyse",ctaRetake:"Reprendre la photo",
+ swTitle:"Scan multi-angles",swFront:"Vues de face (4)",swSides:"Profils trois-quarts",swTilt:"Haut / bas",swNow:"en cours",swHoldFront:"Restez de face un instant…",swTurn:"Tournez lentement la tête d'un côté…",swTurnOther:"…puis de l'autre côté",swTilt2:"Levez légèrement le menton…",swTiltOther:"…puis baissez-le",swPrep:"Préparation de vos vues…",swDone:"Scan terminé : {f} vues de face, {s} profils.",readings:"{n} lectures · accord {a}%",sideViews:"inclut un profil",certMulti:"Scan multi-angles : {f} vues de face + {s} profils",camNative:"Ouverture de l'appareil photo du téléphone…",camDenied:"Accès caméra refusé — autorisez-le dans les réglages du navigateur, ou importez une photo.",ctaShoot:"Terminer avec ces vues",ctaCamera:"Lancer le scan caméra",or:"ou",ctaUpload:"Importer une photo",ctaAnalyze:"Lancer l'analyse",ctaRetake:"Reprendre la photo",
  camErr:"Le flux vidéo est bloqué ici — utilisez « Prendre un selfie ».",heicErr:"Conversion HEIC impossible — exportez en JPEG.",imgErr:"Image illisible.",
  photoReady:"Photo prête. Vérifiez la qualité ci-contre.",
  selfEyebrow:"Étape 3 · Votre regard",selfTitle:"Avant le résultat : que voyez-vous ?",selfLede:"Notez ce que vous percevez, sans réfléchir. Nous comparerons votre regard à la mesure — l'écart est souvent la vraie découverte.",
@@ -981,7 +986,7 @@ en:{
  ck_face:"One face",ck_pose:"Facing forward",ck_tilt:"Head straight",ck_dist:"Distance",ck_light:"Even light",ck_exp:"Exposure",ck_resolution:"Resolution",ck_pose2:"Angle",ck_tilt2:"Tilt",ck_exposure:"Exposure",ck_evenLight:"Even light",ck_sharpness:"Sharpness",
  h_noface:"Place your face in the oval",h_multi:"One person only, please",h_pose:"Look straight at the lens",h_tilt:"Straighten your head slightly",h_far:"Come closer",h_near:"Move back a little",h_light:"Turn towards the light",h_dark:"Find more light",h_bright:"Light too strong",h_hold:"Perfect — hold still",h_ghost:"Align your eyes with the guides",
  ghostNote:"Guides from your last analysis are shown: align for a reliable comparison.",
- swTitle:"Multi-angle scan",swFront:"Front views (4)",swSides:"Three-quarter profiles",swTilt:"Up / down",swNow:"now",swHoldFront:"Hold still, facing the camera…",swTurn:"Slowly turn your head to one side…",swTurnOther:"…then to the other side",swTilt2:"Lift your chin slightly…",swTiltOther:"…then lower it",swDone:"Scan complete: {f} front views, {s} profiles.",readings:"{n} readings · {a}% agreement",sideViews:"includes a profile",certMulti:"Multi-angle scan: {f} front views + {s} profiles",camNative:"Opening your phone camera…",camDenied:"Camera access denied — allow it in your browser settings, or upload a photo.",ctaShoot:"Finish with these views",ctaCamera:"Start camera scan",or:"or",ctaUpload:"Upload a photo",ctaAnalyze:"Start analysis",ctaRetake:"Retake photo",
+ swTitle:"Multi-angle scan",swFront:"Front views (4)",swSides:"Three-quarter profiles",swTilt:"Up / down",swNow:"now",swHoldFront:"Hold still, facing the camera…",swTurn:"Slowly turn your head to one side…",swTurnOther:"…then to the other side",swTilt2:"Lift your chin slightly…",swTiltOther:"…then lower it",swPrep:"Preparing your views…",swDone:"Scan complete: {f} front views, {s} profiles.",readings:"{n} readings · {a}% agreement",sideViews:"includes a profile",certMulti:"Multi-angle scan: {f} front views + {s} profiles",camNative:"Opening your phone camera…",camDenied:"Camera access denied — allow it in your browser settings, or upload a photo.",ctaShoot:"Finish with these views",ctaCamera:"Start camera scan",or:"or",ctaUpload:"Upload a photo",ctaAnalyze:"Start analysis",ctaRetake:"Retake photo",
  camErr:"Live video is blocked here — use “Take a selfie”.",heicErr:"HEIC conversion failed — export as JPEG.",imgErr:"Unreadable image.",
  photoReady:"Photo ready. Check the quality on the right.",
  selfEyebrow:"Step 3 · Your eye",selfTitle:"Before the result: what do you see?",selfLede:"Rate what you perceive, without overthinking. We'll compare your view with the measurement — the gap is often the real discovery.",
@@ -1063,7 +1068,7 @@ ar:{
  ck_face:"وجه واحد",ck_pose:"الوجه للأمام",ck_tilt:"الرأس مستقيم",ck_dist:"المسافة",ck_light:"إضاءة متجانسة",ck_exp:"التعريض",ck_resolution:"الدقة",ck_pose2:"الزاوية",ck_tilt2:"الميل",ck_exposure:"التعريض",ck_evenLight:"إضاءة متجانسة",ck_sharpness:"الوضوح",
  h_noface:"ضعي وجهك داخل الإطار",h_multi:"شخص واحد فقط من فضلك",h_pose:"انظري مباشرة إلى العدسة",h_tilt:"عدّلي ميل الرأس قليلاً",h_far:"اقتربي",h_near:"ابتعدي قليلاً",h_light:"اتجهي نحو الضوء",h_dark:"ابحثي عن ضوء أكثر",h_bright:"الضوء قوي جداً",h_hold:"ممتاز — لا تتحركي",h_ghost:"طابقي عينيك مع العلامات",
  ghostNote:"تظهر علامات تحليلك السابق: طابقيها لمقارنة موثوقة.",
- swTitle:"مسح متعدد الزوايا",swFront:"صور أمامية (4)",swSides:"صور جانبية ثلاثة أرباع",swTilt:"أعلى / أسفل",swNow:"جارٍ",swHoldFront:"ابقي مواجهة للكاميرا لحظة…",swTurn:"أديري رأسك ببطء إلى جانب…",swTurnOther:"…ثم إلى الجانب الآخر",swTilt2:"ارفعي ذقنك قليلاً…",swTiltOther:"…ثم اخفضيه",swDone:"اكتمل المسح: {f} صور أمامية، {s} جانبية.",readings:"{n} قراءات · توافق {a}%",sideViews:"يشمل صورة جانبية",certMulti:"مسح متعدد الزوايا: {f} أمامية + {s} جانبية",camNative:"فتح كاميرا الهاتف…",camDenied:"تم رفض الوصول إلى الكاميرا — اسمحي به من إعدادات المتصفح أو ارفعي صورة.",ctaShoot:"إنهاء بهذه الصور",ctaCamera:"بدء المسح بالكاميرا",or:"أو",ctaUpload:"رفع صورة",ctaAnalyze:"بدء التحليل",ctaRetake:"إعادة التصوير",
+ swTitle:"مسح متعدد الزوايا",swFront:"صور أمامية (4)",swSides:"صور جانبية ثلاثة أرباع",swTilt:"أعلى / أسفل",swNow:"جارٍ",swHoldFront:"ابقي مواجهة للكاميرا لحظة…",swTurn:"أديري رأسك ببطء إلى جانب…",swTurnOther:"…ثم إلى الجانب الآخر",swTilt2:"ارفعي ذقنك قليلاً…",swTiltOther:"…ثم اخفضيه",swPrep:"جارٍ تجهيز الصور…",swDone:"اكتمل المسح: {f} صور أمامية، {s} جانبية.",readings:"{n} قراءات · توافق {a}%",sideViews:"يشمل صورة جانبية",certMulti:"مسح متعدد الزوايا: {f} أمامية + {s} جانبية",camNative:"فتح كاميرا الهاتف…",camDenied:"تم رفض الوصول إلى الكاميرا — اسمحي به من إعدادات المتصفح أو ارفعي صورة.",ctaShoot:"إنهاء بهذه الصور",ctaCamera:"بدء المسح بالكاميرا",or:"أو",ctaUpload:"رفع صورة",ctaAnalyze:"بدء التحليل",ctaRetake:"إعادة التصوير",
  camErr:"البث المباشر محظور هنا — استخدمي «التقاط صورة سيلفي».",heicErr:"تعذّر تحويل HEIC — صدّريها بصيغة JPEG.",imgErr:"صورة غير مقروءة.",
  photoReady:"الصورة جاهزة. تحققي من الجودة.",
  selfEyebrow:"الخطوة 3 · نظرتك",selfTitle:"قبل النتيجة: ماذا ترين؟",selfLede:"قيّمي ما تلاحظينه دون تفكير طويل. سنقارن نظرتك بالقياس — والفارق غالباً هو الاكتشاف الحقيقي.",
@@ -1192,17 +1197,20 @@ const SW={on:false};
 function resetSweep(){ Object.assign(SW,{on:true,phase:"center",fronts:[],cand:[],L:null,R:null,Lb:null,Rb:null,Ln:0,Rn:0,U:null,D:null,t0:Date.now(),phaseT:Date.now(),lastFront:0}); S.frames=null; PREV_NOSE=null; hideHD(); }
 const MAXDIM=2048;   // keep pixels: the engine crops the face itself
 function lastFraming(){const j=Journal.load(); const e=j.entries[j.entries.length-1]; return e&&e.framing&&e.camera?e.framing:null;}
+let WARMED=false;
 function prepCapture(){
   renderChecks(null);
   if(!S.photo&&!stream){ showIntroCard(); }
   document.getElementById("ghostNote").hidden=!lastFraming();
-  if(window.KOSMO_CV) KOSMO_CV.FaceLocator.init();   // warm the model
+  if(window.KOSMO_CV&&!WARMED){ WARMED=true; KOSMO_CV.FaceLocator.init().then(ok=>{ if(!ok) return; const c=document.createElement("canvas"); c.width=c.height=128; c.getContext("2d").fillRect(0,0,128,128); return KOSMO_CV.FaceLocator.raw(c); }).catch(()=>{}); }   // warm model + GPU shaders before the camera opens
 }
 function chkRow(key,status,val){return `<div class="chk"><span>${esc(t("ck_"+key))}</span><span class="v">${val==null?"":esc(val)}</span><span class="dot ${status||""}"></span></div>`;}
+function setHTML(el,h){ if(el&&el._h!==h){ el.innerHTML=h; el._h=h; } }
+function setTxt(id,v){ const el=document.getElementById(id); if(el&&el.textContent!==v) el.textContent=v; }
 function renderChecks(list){
   const el=document.getElementById("checks");
-  if(!list){el.innerHTML=["face","pose","tilt","dist","light","exp"].map(k=>chkRow(k,"",null)).join("");return;}
-  el.innerHTML=list.map(c=>chkRow(c.key,c.status,c.val)).join("");
+  if(!list){setHTML(el,["face","pose","tilt","dist","light","exp"].map(k=>chkRow(k,"",null)).join(""));return;}
+  setHTML(el,list.map(c=>chkRow(c.key,c.status,c.val)).join(""));
 }
 function cameraAllowedHere(){
   if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)) return false;
@@ -1256,7 +1264,7 @@ async function startCamera(){
     try{ await video.play(); }catch(e){}
     document.getElementById("oval").hidden=false;
     document.getElementById("btnAnalyze").disabled=true; S.photo=null;
-    holdCount=0; resetSweep(); liveTimer=setInterval(liveTick,160);
+    holdCount=0; resetSweep(); liveTimer=true; scheduleTick(0);
   }catch(e){
     stopCamera(); document.getElementById("stageEmpty").hidden=false;
     switchToNativeCam(); document.getElementById("camFallback").hidden=false;
@@ -1271,7 +1279,10 @@ function trackFace(p,P,cw,ch){
   const k=FE?0.35:1; FE=FE?{cx:FE.cx+(cx-FE.cx)*k,cy:FE.cy+(cy-FE.cy)*k,rx:FE.rx+(rx-FE.rx)*k,ry:FE.ry+(ry-FE.ry)*k}:{cx,cy,rx,ry};
   // keep the CSS oval on the same ellipse
   const o=document.getElementById("oval"), sx=hud.clientWidth/cw, sy=hud.clientHeight/ch;
-  o.style.left=(FE.cx*sx)+"px"; o.style.top=(FE.cy*sy)+"px"; o.style.width=(2*FE.rx*sx*0.92)+"px"; o.style.height=(2*FE.ry*sy*0.92)+"px";
+  const w=Math.round(2*FE.rx*sx*0.92), h=Math.round(2*FE.ry*sy*0.92);
+  if(!o.classList.contains("trk")) o.classList.add("trk");
+  if(Math.abs((o._w||0)-w)>3||Math.abs((o._h||0)-h)>3){ o.style.width=w+"px"; o.style.height=h+"px"; o._w=w; o._h=h; }
+  o.style.transform=`translate3d(${(FE.cx*sx-o._w/2).toFixed(1)}px,${(FE.cy*sy-o._h/2).toFixed(1)}px,0)`;
 }
 function drawRing(ctx,cw,ch){
   const E=FE||{cx:cw/2,cy:ch*0.47,rx:cw*0.33,ry:ch*0.36};
@@ -1280,7 +1291,7 @@ function drawRing(ctx,cw,ch){
   segs.forEach(([k,a0,a1])=>{ ctx.strokeStyle=SW[k]?"#E8D7BC":"rgba(255,255,255,.22)"; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,a0+0.06,a1-0.06); ctx.stroke(); });
   const n=Math.min(4,SW.fronts.length); ctx.fillStyle="#E8D7BC"; for(let i=0;i<4;i++){ ctx.globalAlpha=i<n?1:.25; ctx.beginPath(); ctx.arc(cx-21*devicePixelRatio+i*14*devicePixelRatio,Math.min(ch-48*devicePixelRatio,cy+ry+22*devicePixelRatio),4*devicePixelRatio,0,7); ctx.fill(); } ctx.globalAlpha=1;
 }
-function stopCamera(){ FE=null; const ov=document.getElementById("oval"); if(ov) ov.removeAttribute("style"); const bs=document.getElementById("btnShoot"); if(bs) bs.hidden=true; const gd=document.getElementById("guide"); if(gd) gd.hidden=true; if(liveTimer){clearInterval(liveTimer);liveTimer=null;} if(stream){stream.getTracks().forEach(tr=>tr.stop());stream=null;} video.hidden=true; document.getElementById("oval").hidden=true; const c=hud.getContext("2d"); c.clearRect(0,0,hud.width,hud.height);}
+function stopCamera(){ FE=null; const ov=document.getElementById("oval"); if(ov){ ov.removeAttribute("style"); ov.classList.remove("trk"); ov._w=ov._h=0; } const bs=document.getElementById("btnShoot"); if(bs) bs.hidden=true; const gd=document.getElementById("guide"); if(gd) gd.hidden=true; liveTimer=null; if(TICK_H){clearTimeout(TICK_H);TICK_H=null;} if(stream){stream.getTracks().forEach(tr=>tr.stop());stream=null;} video.hidden=true; document.getElementById("oval").hidden=true; const c=hud.getContext("2d"); c.clearRect(0,0,hud.width,hud.height);}
 const lumCanvas=document.createElement("canvas");
 const LUMHIST=[]; let LASTL={};
 function frameLum(pts){
@@ -1297,9 +1308,11 @@ function frameLum(pts){
   LASTL={mean:med("m"), asym:med("a"), backlit:med("b")===1};
   return LASTL;
 }
-let TICK_ERR=0, LAST_ERR="", FPS_T=[];
+let TICK_ERR=0, LAST_ERR="", FPS_T=[], TICK_H=null;
+function scheduleTick(ms){ if(!liveTimer) return; TICK_H=setTimeout(()=>requestAnimationFrame(async()=>{ const t0=performance.now(); await liveTick(); const dt=performance.now()-t0; scheduleTick(Math.max(30,110-dt)); }),ms); }
 async function liveTick(){
-  if(liveBusy||!video.videoWidth) return; liveBusy=true;
+  if(liveBusy||!liveTimer) return;
+  if(!video.videoWidth){ return; } liveBusy=true;
   FPS_T.push(performance.now()); if(FPS_T.length>10) FPS_T.shift();
   try{ await liveTickInner(); TICK_ERR=0; }
   catch(e){ TICK_ERR++; LAST_ERR=String(e&&e.message||e).slice(0,80); console.warn("[KOSMO] tick",e); if(TICK_ERR>=3){ document.getElementById("btnShoot").hidden=false; document.getElementById("hint").textContent=t("tickErr"); } }
@@ -1332,7 +1345,7 @@ async function liveTickInner(){
       allOk=list.every(c=>c.status==="pass");
       if(DEBUG){ctx.fillStyle="rgba(255,255,255,.85)";[p.pupR,p.pupL,p.nose,p.mR,p.mL].forEach(q=>{const[a,b]=P(q);ctx.beginPath();ctx.arc(a,b,2.2*devicePixelRatio,0,7);ctx.fill();});}
     }
-    renderChecks(list); document.getElementById("hint").textContent=hint; if(SW.on) renderSweep(false);
+    renderChecks(list); setTxt("hint",hint); if(SW.on) renderSweep(false);
     document.getElementById("oval").classList.toggle("good",allOk);
     if(r&&r.faceCount===1) trackFace(r.pts,P,cw,ch);
     const noFail=list.length>1&&list.every(c=>c.status!=="fail"); document.getElementById("btnShoot").hidden=!noFail||(SW.on&&SW.phase!=="center");
@@ -1346,13 +1359,13 @@ async function liveTickInner(){
         const relaxed=elC>12;
         if(Math.abs(y)<(relaxed?0.2:0.14)&&(relaxed||(st.tilt!=="fail"&&st.dist!=="fail"&&st.exp!=="fail"&&still))&&now-SW.lastFront>160){
           const sh=frameSharp(r.pts), top=SW.cand.slice().sort((a,b)=>b.sharp-a.sharp).slice(0,4);
-          if(top.length<4||sh>top[3].sharp){ const f=grabFrame(); f.yaw=y; f.sharp=sh; SW.cand.push(f); } else SW.cand.push({sharp:-1,skip:true});
+          if(top.length<4||sh>top[3].sharp){ const f=grabFrame(); f.yaw=y; f.sharp=sh; SW.cand.push(f); if(top.length>=4) freeFrame(top[3]), top[3].skip=true; } else SW.cand.push({sharp:-1,skip:true});
           SW.lastFront=now; }
         SW.fronts=SW.cand.filter(c=>!c.skip).sort((a,b)=>b.sharp-a.sharp).slice(0,4);
-        if(SW.cand.length>=8||(SW.fronts.length>=4&&elC>5)||(SW.fronts.length>=1&&elC>16)){ SW.cand=[]; flashCapture(); SW.phase="turn"; SW.phaseT=now; }
+        if(SW.cand.length>=8||(SW.fronts.length>=4&&elC>5)||(SW.fronts.length>=1&&elC>16)){ SW.cand.forEach(c=>{ if(!SW.fronts.includes(c)) freeFrame(c); }); SW.cand=[]; flashCapture(); SW.phase="turn"; SW.phaseT=now; }
         else hint = SW.fronts.length? t("swHoldFront") : hint;
       } else if(SW.phase==="turn"){
-        const keepSide=(k)=>{ const sh=frameSharp(r.pts); SW[k+"n"]=(SW[k+"n"]||0)+1; if((!SW[k+"b"]||sh>SW[k+"b"].sharp)&&now-(SW[k+"t"]||0)>300){ SW[k+"b"]=Object.assign(grabFrame(),{yaw:y,sharp:sh}); SW[k+"t"]=now; } if(SW[k+"n"]>=2&&!SW[k]){ SW[k]=SW[k+"b"]; flashCapture(); } };
+        const keepSide=(k)=>{ const sh=frameSharp(r.pts); SW[k+"n"]=(SW[k+"n"]||0)+1; if((!SW[k+"b"]||sh>SW[k+"b"].sharp)&&now-(SW[k+"t"]||0)>300){ freeFrame(SW[k+"b"]); SW[k+"b"]=Object.assign(grabFrame(),{yaw:y,sharp:sh}); SW[k+"t"]=now; } if(SW[k+"n"]>=2&&!SW[k]){ SW[k]=SW[k+"b"]; flashCapture(); } };
         if(y>0.20&&y<0.55&&Math.abs(pi)<0.18&&!SW.L&&motion<0.15) keepSide("L");
         if(y<-0.20&&y>-0.55&&Math.abs(pi)<0.18&&!SW.R&&motion<0.15) keepSide("R");
         hint=(!SW.L&&!SW.R)?t("swTurn"):!SW.L?t("swTurnOther"):!SW.R?t("swTurnOther"):"";
@@ -1368,7 +1381,7 @@ async function liveTickInner(){
       if(SW.phase==="center"){ const off=Math.abs(y)>=0.14?t("h_pose"):st.dist==="fail"?(t("h_far")):!still?t("gStill"):""; setGuide(t("g1"), off||t("gHold"), off?"":"◉",0,0,prog); hint=LASTL.backlit?t("h_backlit"):st.light==="fail"?t("h_lightSoft"):""; }
       else if(SW.phase==="turn"){ const none=!SW.L&&!SW.R, more=Math.abs(y)>0.08&&Math.abs(y)<0.20&&el>2, goLeft=!SW.L; setGuide(t("g2"), more?t("gMore"):(none?t("gEither"):t("gOther")), none?"↔":(goLeft?"←":"→"), none?0:(goLeft?-10:10), 0, prog); hint=Math.abs(pi)>=0.15?t("gLevel"):""; }
       else if(SW.phase==="tilt"){ const goUp=!SW.U; setGuide(t("g3"), goUp?t("gUp"):t("gDown"), goUp?"↑":"↓", 0, goUp?-8:8, prog); hint=""; }
-      document.getElementById("hint").textContent=hint; renderSweep(false);
+      setTxt("hint",hint); renderSweep(false);
       drawRing(ctx,cw,ch);
     }
   }
@@ -1392,23 +1405,37 @@ function frameSharp(p){   // Laplacian variance on the eye/cheek band at native 
 }
 function flashCapture(){ const f=document.getElementById("flash"); f.classList.add("on"); setTimeout(()=>f.classList.remove("on"),60); try{navigator.vibrate&&navigator.vibrate(30);}catch(e){} }
 function setGuide(step,text,icon,nx,ny,prog){
-  const g=document.getElementById("guide"); g.hidden=false;
-  document.getElementById("gStep").textContent=step; document.getElementById("gText").textContent=text;
-  const ic=document.getElementById("gIcon"); ic.textContent=icon||""; ic.style.setProperty("--nx",(nx||0)+"px"); ic.style.setProperty("--ny",(ny||0)+"px");
-  if(prog!=null) document.getElementById("gBar").style.width=Math.round(prog*100)+"%";
+  const g=document.getElementById("guide"); if(g.hidden) g.hidden=false;
+  setTxt("gStep",step); setTxt("gText",text);
+  const ic=document.getElementById("gIcon"); const key=(icon||"")+"|"+(nx||0)+"|"+(ny||0);
+  if(ic._k!==key){ ic._k=key; ic.textContent=icon||""; ic.style.setProperty("--nx",(nx||0)+"px"); ic.style.setProperty("--ny",(ny||0)+"px"); }
+  if(prog!=null){ const w=Math.round(prog*100)+"%", b=document.getElementById("gBar"); if(b.style.width!==w) b.style.width=w; }
 }
-function grabFrame(){
+function grabFrame(){   // raw pixel copy only — JPEG encoding is deferred to the end of the scan
   const vw=video.videoWidth,vh=video.videoHeight,sc=Math.min(1,MAXDIM/Math.max(vw,vh));
   const c=document.createElement("canvas");c.width=Math.round(vw*sc);c.height=Math.round(vh*sc);
   c.getContext("2d").drawImage(video,0,0,c.width,c.height);
-  return {url:c.toDataURL("image/jpeg",0.9),w:c.width,h:c.height};
+  return {canvas:c,w:c.width,h:c.height};
 }
-function captureFrame(){ const f=grabFrame(); SW.on=false; stopCamera(); setPhoto(f.url,f.w,f.h); }
-function finishSweep(){
-  const frames=SW.fronts.map(f=>({url:f.url,role:"front"}));
-  ["L","R"].forEach(k=>{ if(SW[k]) frames.push({url:SW[k].url,role:"side"}); });
-  ["U","D"].forEach(k=>{ if(SW[k]) frames.push({url:SW[k].url,role:"aux"}); });
-  const first=SW.fronts[0]; SW.on=false; stopCamera();
+function freeFrame(f){ if(f&&f.canvas&&!f.url){ f.canvas.width=f.canvas.height=0; f.canvas=null; } }
+function encodeFrame(f){ return new Promise(res=>{
+  if(!f||f.url||!f.canvas) return res(f);
+  const done=u=>{ f.url=u; f.canvas.width=f.canvas.height=0; f.canvas=null; res(f); };
+  try{ f.canvas.toBlob(b=>{ if(!b) return done(f.canvas.toDataURL("image/jpeg",0.9)); const fr=new FileReader(); fr.onload=()=>done(fr.result); fr.onerror=()=>done(f.canvas.toDataURL("image/jpeg",0.9)); fr.readAsDataURL(b); },"image/jpeg",0.9); }
+  catch(e){ done(f.canvas.toDataURL("image/jpeg",0.9)); }
+}); }
+async function captureFrame(){ const f=grabFrame(); SW.on=false; stopCamera(); await encodeFrame(f); setPhoto(f.url,f.w,f.h); }
+async function finishSweep(){
+  if(SW.finishing) return; SW.finishing=true;
+  const first=SW.fronts[0]; SW.on=false;
+  // stop the live loop first, then encode the kept frames (async, off the hot path)
+  (SW.cand||[]).forEach(c=>{ if(!SW.fronts.includes(c)) freeFrame(c); });
+  ["Lb","Rb"].forEach(k=>{ if(SW[k]&&SW[k]!==SW[k[0]]) freeFrame(SW[k]); });
+  stopCamera(); setTxt("hint",t("swPrep"));
+  const keep=[...SW.fronts.map(f=>[f,"front"]),...["L","R"].filter(k=>SW[k]).map(k=>[SW[k],"side"]),...["U","D"].filter(k=>SW[k]).map(k=>[SW[k],"aux"])];
+  for(const [f] of keep) await encodeFrame(f);
+  const frames=keep.filter(([f])=>f.url).map(([f,role])=>({url:f.url,role}));
+  SW.finishing=false;
   setPhoto(first.url,first.w,first.h); S.frames=frames;
   document.getElementById("hint").textContent=t("swDone",{f:SW.fronts.length,s:(SW.L?1:0)+(SW.R?1:0)});
   renderSweep(true); flashCapture();
@@ -1419,8 +1446,8 @@ function renderSweep(done){
   const el=document.getElementById("sweep"); if(!el) return;
   const row=(k,ok,cur)=>`<div class="chk"><span>${esc(t(k))}</span><span class="v">${cur?esc(t("swNow")):""}</span><span class="dot ${ok?"pass":cur?"warn":""}"></span></div>`;
   const ph=done?"done":SW.phase;
-  el.innerHTML=`<div class="eyebrow" style="font-size:10px;margin:14px 0 4px">${esc(t("swTitle"))}</div>`+
-    row("swFront",SW.fronts&&SW.fronts.length>=4,ph==="center")+row("swSides",SW.L&&SW.R,ph==="turn")+row("swTilt",SW.U&&SW.D,ph==="tilt");
+  setHTML(el,`<div class="eyebrow" style="font-size:10px;margin:14px 0 4px">${esc(t("swTitle"))}</div>`+
+    row("swFront",SW.fronts&&SW.fronts.length>=4,ph==="center")+row("swSides",SW.L&&SW.R,ph==="turn")+row("swTilt",SW.U&&SW.D,ph==="tilt"));
 }
 async function fileToPhoto(f){
     let blob=f;
