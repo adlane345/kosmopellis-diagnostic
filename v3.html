@@ -98,7 +98,7 @@ input:focus,select:focus{outline:none;border-color:var(--copper)}
 .stage video{transform:scaleX(-1)}
 .stage canvas.hud{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .stage .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#d9d2c8;gap:14px;text-align:center;padding:24px}
-.stage .oval{position:absolute;left:50%;top:47%;width:58%;height:64%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px dashed rgba(255,255,255,.55);pointer-events:none;transition:border-color .3s}
+.stage .oval{position:absolute;left:50%;top:47%;width:58%;height:64%;transform:translate(-50%,-50%);border-radius:50%;border:1.5px dashed rgba(255,255,255,.55);pointer-events:none;transition:border-color .3s,left .18s linear,top .18s linear,width .18s linear,height .18s linear}
 .stage .oval.good{border:2px solid #E8D7BC}
 .stage .hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;color:#fff;font-size:14px;letter-spacing:.04em;text-shadow:0 1px 8px rgba(0,0,0,.5)}
 .coach{padding:24px}
@@ -1263,13 +1263,24 @@ async function startCamera(){
     toast(t("camBlocked"));
   }
 }
+let FE=null;   // tracked face ellipse in hud-canvas pixels
+function trackFace(p,P,cw,ch){
+  const t=P(p.top), c=P(p.chin), l=P(p.Rx), r=P(p.Lx);
+  const cx=(l[0]+r[0])/2, cy=(t[1]+c[1])/2+ (c[1]-t[1])*0.02;
+  const ry=Math.abs(c[1]-t[1])*0.68, rx=Math.max(Math.abs(r[0]-l[0])*1.05, ry*0.74);
+  const k=FE?0.35:1; FE=FE?{cx:FE.cx+(cx-FE.cx)*k,cy:FE.cy+(cy-FE.cy)*k,rx:FE.rx+(rx-FE.rx)*k,ry:FE.ry+(ry-FE.ry)*k}:{cx,cy,rx,ry};
+  // keep the CSS oval on the same ellipse
+  const o=document.getElementById("oval"), sx=hud.clientWidth/cw, sy=hud.clientHeight/ch;
+  o.style.left=(FE.cx*sx)+"px"; o.style.top=(FE.cy*sy)+"px"; o.style.width=(2*FE.rx*sx*0.92)+"px"; o.style.height=(2*FE.ry*sy*0.92)+"px";
+}
 function drawRing(ctx,cw,ch){
-  const cx=cw/2, cy=ch*0.47, rx=cw*0.33, ry=ch*0.36, lw=5*devicePixelRatio, segs=[["L",Math.PI*0.75,Math.PI*1.25],["R",-Math.PI*0.25,Math.PI*0.25],["U",Math.PI*1.25,Math.PI*1.75],["D",Math.PI*0.25,Math.PI*0.75]];
+  const E=FE||{cx:cw/2,cy:ch*0.47,rx:cw*0.33,ry:ch*0.36};
+  const cx=E.cx, cy=E.cy, rx=E.rx, ry=E.ry, lw=5*devicePixelRatio, segs=[["L",Math.PI*0.75,Math.PI*1.25],["R",-Math.PI*0.25,Math.PI*0.25],["U",Math.PI*1.25,Math.PI*1.75],["D",Math.PI*0.25,Math.PI*0.75]];
   ctx.lineWidth=lw; ctx.lineCap="round";
   segs.forEach(([k,a0,a1])=>{ ctx.strokeStyle=SW[k]?"#E8D7BC":"rgba(255,255,255,.22)"; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,a0+0.06,a1-0.06); ctx.stroke(); });
-  const n=Math.min(4,SW.fronts.length); ctx.fillStyle="#E8D7BC"; for(let i=0;i<4;i++){ ctx.globalAlpha=i<n?1:.25; ctx.beginPath(); ctx.arc(cx-21*devicePixelRatio+i*14*devicePixelRatio,ch-48*devicePixelRatio,4*devicePixelRatio,0,7); ctx.fill(); } ctx.globalAlpha=1;
+  const n=Math.min(4,SW.fronts.length); ctx.fillStyle="#E8D7BC"; for(let i=0;i<4;i++){ ctx.globalAlpha=i<n?1:.25; ctx.beginPath(); ctx.arc(cx-21*devicePixelRatio+i*14*devicePixelRatio,Math.min(ch-48*devicePixelRatio,cy+ry+22*devicePixelRatio),4*devicePixelRatio,0,7); ctx.fill(); } ctx.globalAlpha=1;
 }
-function stopCamera(){ const bs=document.getElementById("btnShoot"); if(bs) bs.hidden=true; const gd=document.getElementById("guide"); if(gd) gd.hidden=true; if(liveTimer){clearInterval(liveTimer);liveTimer=null;} if(stream){stream.getTracks().forEach(tr=>tr.stop());stream=null;} video.hidden=true; document.getElementById("oval").hidden=true; const c=hud.getContext("2d"); c.clearRect(0,0,hud.width,hud.height);}
+function stopCamera(){ FE=null; const ov=document.getElementById("oval"); if(ov) ov.removeAttribute("style"); const bs=document.getElementById("btnShoot"); if(bs) bs.hidden=true; const gd=document.getElementById("guide"); if(gd) gd.hidden=true; if(liveTimer){clearInterval(liveTimer);liveTimer=null;} if(stream){stream.getTracks().forEach(tr=>tr.stop());stream=null;} video.hidden=true; document.getElementById("oval").hidden=true; const c=hud.getContext("2d"); c.clearRect(0,0,hud.width,hud.height);}
 const lumCanvas=document.createElement("canvas");
 const LUMHIST=[]; let LASTL={};
 function frameLum(pts){
@@ -1323,6 +1334,7 @@ async function liveTickInner(){
     }
     renderChecks(list); document.getElementById("hint").textContent=hint; if(SW.on) renderSweep(false);
     document.getElementById("oval").classList.toggle("good",allOk);
+    if(r&&r.faceCount===1) trackFace(r.pts,P,cw,ch);
     const noFail=list.length>1&&list.every(c=>c.status!=="fail"); document.getElementById("btnShoot").hidden=!noFail||(SW.on&&SW.phase!=="center");
     if(SW.on && r && r.faceCount===1){
       const st=Object.fromEntries(list.map(c=>[c.key,c.status])), now=Date.now(), y=r.yaw, pi=r.pitch||0;
