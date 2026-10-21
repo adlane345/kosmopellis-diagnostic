@@ -193,6 +193,23 @@ table.cal td:last-child{border-inline-end:1px solid var(--line-2);border-start-e
 .gaptrack i{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);font-style:normal}
 .gaptrack i.m{background:var(--ink)}.gaptrack i.s{background:#fff;border:2px solid var(--copper)}
 .disc{font-size:12px;color:var(--ink-3);border-top:1px solid var(--line);padding:22px 0 60px;margin-top:40px}
+
+.guide{position:absolute;left:12px;right:12px;top:12px;background:rgba(28,26,24,.78);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-radius:18px;padding:12px 16px 14px;color:#fff;text-align:center;z-index:3}
+.gstep{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#E8D7BC}
+.gmain{display:flex;align-items:center;justify-content:center;gap:12px;font-size:19px;font-weight:600;margin-top:6px;line-height:1.25;min-height:48px}
+.gicon{font-size:30px;line-height:1;display:inline-block;animation:nudge 1.1s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(var(--nx,0)) translateY(var(--ny,0))}}
+.gbar{height:4px;border-radius:2px;background:rgba(255,255,255,.18);margin-top:10px;overflow:hidden}.gbar i{display:block;height:100%;width:0;background:#E8D7BC;transition:width .25s}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:4;transition:opacity .25s}.flash.on{opacity:.55;transition:none}
+.stage .hint{bottom:18px;font-size:15px;padding:0 16px}
+.intro{position:absolute;inset:0;z-index:5;background:rgba(20,18,17,.82);display:flex;align-items:center;justify-content:center;padding:18px}
+.introcard{max-width:360px;width:100%}
+.insteps{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.insteps li{display:flex;gap:12px;align-items:flex-start;color:#fff}
+.insteps b{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid #E8D7BC;color:#E8D7BC;display:grid;place-items:center;font-size:13px}
+.insteps strong{display:block;font-size:15px}.insteps em{display:block;font-style:normal;color:#CFC8BD;font-size:13px;margin-top:2px}
+.intips{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}.intips span{font-size:12px;color:#EDE4D6;border:1px solid rgba(232,215,188,.4);border-radius:999px;padding:5px 10px}
+@media (max-width:860px){.capture .stage{aspect-ratio:auto;height:78vh;max-height:720px}}
 /* JOURNAL */
 .jgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:24px 0}
 .jcard{padding:24px}
@@ -320,6 +337,21 @@ table.cal td:last-child{border-inline-end:1px solid var(--line-2);border-start-e
       <div class="oval" id="oval" hidden></div>
       <canvas class="hud" id="hud"></canvas>
       <div class="hint" id="hint"></div>
+      <div class="guide" id="guide" hidden><div class="gstep" id="gStep"></div><div class="gmain"><span class="gicon" id="gIcon"></span><span id="gText"></span></div><div class="gbar"><i id="gBar"></i></div></div>
+      <div class="flash" id="flash"></div>
+      <div class="intro" id="intro" hidden>
+        <div class="introcard">
+          <div class="eyebrow" style="color:#E8D7BC" data-i="inTitle"></div>
+          <h3 style="color:#fff;margin:8px 0 16px;font-size:20px" data-i="inHead"></h3>
+          <ol class="insteps">
+            <li><b>1</b><span><strong data-i="in1t"></strong><em data-i="in1"></em></span></li>
+            <li><b>2</b><span><strong data-i="in2t"></strong><em data-i="in2"></em></span></li>
+            <li><b>3</b><span><strong data-i="in3t"></strong><em data-i="in3"></em></span></li>
+          </ol>
+          <div class="intips"><span data-i="tip1"></span><span data-i="tip2"></span><span data-i="tip3"></span></div>
+          <button class="btn copper" id="inGo" style="width:100%;margin-top:18px" data-i="inGo"></button>
+        </div>
+      </div>
     </div>
     <div class="card coach">
       <h3 data-i="coachTitle"></h3>
@@ -818,7 +850,7 @@ fr:{
  navJournal:"Mon journal",
  heroTitle:"Votre peau est unique.<br>Votre soin devrait l'être aussi.",
  heroLede:"Une lecture zone par zone des signes visibles de votre visage, un protocole KŌSMOPELLIS dosé au sachet près, et un journal qui suit votre rituel dans le temps.",
- heroFront:"FRONT",heroEyes:"YEUX",heroLips:"LÈVRES",ctaNativeCam:"Prendre un selfie",camBlocked:"Vidéo en direct non autorisée ici — touchez « Prendre un selfie » pour utiliser l'appareil photo du téléphone.",ctaStart:"Analyser ma peau",ctaTech:"Notre méthode",
+ heroFront:"FRONT",heroEyes:"YEUX",heroLips:"LÈVRES",ctaNativeCam:"Prendre un selfie",camBlocked:"Vidéo en direct non autorisée ici — touchez « Prendre un selfie » pour utiliser l'appareil photo du téléphone.",h_lightSoft:"Lumière inégale — idéalement face à une fenêtre (on continue)",inTitle:"Scan guidé · 15 secondes",inHead:"Trois gestes simples",in1t:"Regardez l'objectif",in1:"Restez immobile 2 secondes.",in2t:"Tournez la tête",in2:"Lentement vers la gauche, puis vers la droite.",in3t:"Levez puis baissez le menton",in3:"Un petit mouvement suffit.",tip1:"Face à une fenêtre",tip2:"Sans lunettes",tip3:"Cheveux dégagés",inGo:"C'est parti",g1:"Étape 1 / 3",g2:"Étape 2 / 3",g3:"Étape 3 / 3",gHold:"Regardez l'objectif, ne bougez plus",gLeft:"Tournez lentement vers la gauche",gRight:"Maintenant vers la droite",gMore:"Encore un peu plus…",gLevel:"Gardez le menton droit",gUp:"Levez légèrement le menton",gDown:"Puis baissez-le doucement",gBack:"Revenez doucement face à l'objectif",ctaStart:"Analyser ma peau",ctaTech:"Notre méthode",
  trust1:"Analyse dans votre navigateur",trust2:"Photo jamais conservée par défaut",trust3:"Confiance affichée pour chaque zone",
  how1t:"Votre profil",how1:"Quelques informations et vos consentements, séparés et explicites.",
  how2t:"Votre photo",how2:"Un coach en direct vérifie lumière, angle et distance avant la capture.",
@@ -900,7 +932,7 @@ en:{
  navJournal:"My journal",
  heroTitle:"Your skin is unique.<br>Your care should be too.",
  heroLede:"A zone-by-zone reading of the visible signs on your face, a KŌSMOPELLIS protocol dosed to the sachet, and a journal that follows your ritual over time.",
- heroFront:"FOREHEAD",heroEyes:"EYES",heroLips:"LIPS",ctaNativeCam:"Take a selfie",camBlocked:"Live video isn't allowed here — tap “Take a selfie” to use your phone camera.",ctaStart:"Analyse my skin",ctaTech:"Our method",
+ heroFront:"FOREHEAD",heroEyes:"EYES",heroLips:"LIPS",ctaNativeCam:"Take a selfie",camBlocked:"Live video isn't allowed here — tap “Take a selfie” to use your phone camera.",h_lightSoft:"Uneven light — ideally face a window (continuing)",inTitle:"Guided scan · 15 seconds",inHead:"Three simple moves",in1t:"Look at the lens",in1:"Hold still for 2 seconds.",in2t:"Turn your head",in2:"Slowly to the left, then to the right.",in3t:"Lift then lower your chin",in3:"A small movement is enough.",tip1:"Face a window",tip2:"No glasses",tip3:"Hair off your face",inGo:"Let's go",g1:"Step 1 / 3",g2:"Step 2 / 3",g3:"Step 3 / 3",gHold:"Look at the lens and hold still",gLeft:"Slowly turn to your left",gRight:"Now to your right",gMore:"A little further…",gLevel:"Keep your chin level",gUp:"Lift your chin slightly",gDown:"Then lower it gently",gBack:"Come back gently towards the lens",ctaStart:"Analyse my skin",ctaTech:"Our method",
  trust1:"Analysis runs in your browser",trust2:"Photo never kept by default",trust3:"Confidence shown for every zone",
  how1t:"Your profile",how1:"A few details and your consents — separate and explicit.",
  how2t:"Your photo",how2:"A live coach checks light, angle and distance before capture.",
@@ -982,7 +1014,7 @@ ar:{
  navJournal:"سجلّي",
  heroTitle:"بشرتك فريدة.<br>ويجب أن تكون عنايتك كذلك.",
  heroLede:"قراءة لكل منطقة من العلامات الظاهرة على وجهك، وبروتوكول KŌSMOPELLIS محسوب بدقة الكيس الواحد، وسجلّ يتابع روتينك مع الوقت.",
- heroFront:"الجبهة",heroEyes:"العيون",heroLips:"الشفاه",ctaNativeCam:"التقاط صورة سيلفي",camBlocked:"البث المباشر غير مسموح هنا — المسي «التقاط صورة سيلفي» لاستخدام كاميرا الهاتف.",ctaStart:"حلّلي بشرتي",ctaTech:"منهجيتنا",
+ heroFront:"الجبهة",heroEyes:"العيون",heroLips:"الشفاه",ctaNativeCam:"التقاط صورة سيلفي",camBlocked:"البث المباشر غير مسموح هنا — المسي «التقاط صورة سيلفي» لاستخدام كاميرا الهاتف.",h_lightSoft:"إضاءة غير متساوية — يفضل مواجهة نافذة (نواصل)",inTitle:"مسح موجَّه · 15 ثانية",inHead:"ثلاث حركات بسيطة",in1t:"انظري إلى العدسة",in1:"ابقي ثابتة لثانيتين.",in2t:"أديري رأسك",in2:"ببطء إلى اليسار ثم إلى اليمين.",in3t:"ارفعي ذقنك ثم اخفضيه",in3:"حركة بسيطة تكفي.",tip1:"مقابل نافذة",tip2:"بدون نظارات",tip3:"الشعر بعيداً عن الوجه",inGo:"لنبدأ",g1:"الخطوة 1 / 3",g2:"الخطوة 2 / 3",g3:"الخطوة 3 / 3",gHold:"انظري إلى العدسة ولا تتحركي",gLeft:"استديري ببطء إلى اليسار",gRight:"الآن إلى اليمين",gMore:"قليلاً بعد…",gLevel:"حافظي على استقامة الذقن",gUp:"ارفعي ذقنك قليلاً",gDown:"ثم اخفضيه بلطف",gBack:"عودي بهدوء نحو العدسة",ctaStart:"حلّلي بشرتي",ctaTech:"منهجيتنا",
  trust1:"التحليل داخل متصفحك",trust2:"لا نحتفظ بالصورة افتراضياً",trust3:"درجة الموثوقية لكل منطقة",
  how1t:"ملفك",how1:"بعض المعلومات وموافقاتك، منفصلة وصريحة.",
  how2t:"صورتك",how2:"مدرّب مباشر يتحقق من الإضاءة والزاوية والمسافة قبل الالتقاط.",
@@ -1157,8 +1189,15 @@ document.getElementById("btnCam").addEventListener("click",()=>{
   if(CAM_NATIVE){ document.getElementById("fileCam").click(); return; }
   // Where live video is blocked (embedded viewer, old browser, http), open the phone's native camera instead — synchronously, inside the tap.
   if(!cameraAllowedHere()){ switchToNativeCam(); toast(t("camNative")); document.getElementById("camFallback").hidden=false; document.getElementById("fileCam").click(); return; }
-  startCamera();
+  showIntro();
 });
+let INTRO_SEEN=false;
+function showIntro(){
+  const stage=document.getElementById("stage"); stage.scrollIntoView({behavior:"smooth",block:"center"});
+  if(INTRO_SEEN){ startCamera(); return; }
+  document.getElementById("stageEmpty").hidden=true; document.getElementById("intro").hidden=false;
+}
+document.getElementById("inGo").addEventListener("click",()=>{ INTRO_SEEN=true; document.getElementById("intro").hidden=true; startCamera(); });
 document.getElementById("fileCam").addEventListener("change",e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; const dt=new DataTransfer(); dt.items.add(f); const fi=document.getElementById("file"); fi.files=dt.files; fi.dispatchEvent(new Event("change")); e.target.value=""; });
 document.getElementById("btnShoot").addEventListener("click",()=>{ if(!stream) return; if(SW.on&&SW.fronts.length){ finishSweep(); } else { S.frames=null; captureFrame(); } });
 async function startCamera(){
@@ -1185,16 +1224,19 @@ function drawRing(ctx,cw,ch){
   segs.forEach(([k,a0,a1])=>{ ctx.strokeStyle=SW[k]?"#E8D7BC":"rgba(255,255,255,.22)"; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,a0+0.06,a1-0.06); ctx.stroke(); });
   const n=Math.min(4,SW.fronts.length); ctx.fillStyle="#E8D7BC"; for(let i=0;i<4;i++){ ctx.globalAlpha=i<n?1:.25; ctx.beginPath(); ctx.arc(cx-21*devicePixelRatio+i*14*devicePixelRatio,ch-48*devicePixelRatio,4*devicePixelRatio,0,7); ctx.fill(); } ctx.globalAlpha=1;
 }
-function stopCamera(){ const bs=document.getElementById("btnShoot"); if(bs) bs.hidden=true; if(liveTimer){clearInterval(liveTimer);liveTimer=null;} if(stream){stream.getTracks().forEach(tr=>tr.stop());stream=null;} video.hidden=true; document.getElementById("oval").hidden=true; const c=hud.getContext("2d"); c.clearRect(0,0,hud.width,hud.height);}
+function stopCamera(){ const bs=document.getElementById("btnShoot"); if(bs) bs.hidden=true; const gd=document.getElementById("guide"); if(gd) gd.hidden=true; if(liveTimer){clearInterval(liveTimer);liveTimer=null;} if(stream){stream.getTracks().forEach(tr=>tr.stop());stream=null;} video.hidden=true; document.getElementById("oval").hidden=true; const c=hud.getContext("2d"); c.clearRect(0,0,hud.width,hud.height);}
 const lumCanvas=document.createElement("canvas");
+const LUMHIST=[];
 function frameLum(pts){
-  // sample cheek luminance on both sides from the live frame
-  const W=160,H=Math.round(160*video.videoHeight/video.videoWidth)||213; lumCanvas.width=W; lumCanvas.height=H;
+  const W=200,H=Math.round(200*video.videoHeight/video.videoWidth)||266; lumCanvas.width=W; lumCanvas.height=H;
   const x=lumCanvas.getContext("2d",{willReadFrequently:true}); x.drawImage(video,0,0,W,H);
-  const s=(cx,cy)=>{const d=x.getImageData(Math.max(0,Math.round(cx*W)-6),Math.max(0,Math.round(cy*H)-6),12,12).data;let a=0;for(let i=0;i<d.length;i+=4)a+=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];return a/(d.length/4);};
-  const cy=(pts.nose.y+pts.pupR.y)/2+0.03;
-  const l=s(pts.pupR.x,cy), r=s(pts.pupL.x,cy);
-  return {mean:(l+r)/2, asym:Math.abs(l-r)/Math.max(1,(l+r)/2)};
+  const s=(cx,cy)=>{const r=7,d=x.getImageData(Math.max(0,Math.round(cx*W)-r),Math.max(0,Math.round(cy*H)-r),2*r,2*r).data;const v=[];for(let i=0;i<d.length;i+=4)v.push(0.299*d[i]+0.587*d[i+1]+0.114*d[i+2]);v.sort((a,b)=>a-b);return v[(v.length*0.6)|0];};
+  const eyeY=(pts.pupR.y+pts.pupL.y)/2, midX=(pts.pupR.x+pts.pupL.x)/2, iod=Math.abs(pts.pupL.x-pts.pupR.x);
+  const side=k=>{const xs=midX+k*iod*0.55; return [s(xs,eyeY+iod*0.45),s(midX+k*iod*0.35,eyeY-iod*0.55),s(midX+k*iod*0.45,eyeY+iod*0.75)].sort((a,b)=>a-b)[1];};
+  const l=side(-1), r=side(1), asym=Math.abs(l-r)/Math.max(1,(l+r)/2);
+  LUMHIST.push({m:(l+r)/2,a:asym}); if(LUMHIST.length>10) LUMHIST.shift();
+  const med=k=>LUMHIST.map(o=>o[k]).sort((a,b)=>a-b)[(LUMHIST.length/2)|0];
+  return {mean:med("m"), asym:med("a")};
 }
 async function liveTick(){
   if(liveBusy||!video.videoWidth) return; liveBusy=true;
@@ -1208,17 +1250,19 @@ async function liveTick(){
     const P=p=>[cw-(ox+p.x*vw*sc),oy+p.y*vh*sc];
     if(fr){ctx.strokeStyle="rgba(232,215,188,.9)";ctx.lineWidth=2*devicePixelRatio;[fr.pupR,fr.pupL].forEach(p=>{const[a,b]=P(p);ctx.beginPath();ctx.arc(a,b,14*devicePixelRatio,0,7);ctx.stroke();});}
     let list=[], hint="", allOk=false;
-    if(!r||r.faceCount===0){list=[{key:"face",status:"fail"}];hint=t("h_noface");}
-    else if(r.faceCount>1){list=[{key:"face",status:"fail",val:r.faceCount}];hint=t("h_multi");}
+    if(r&&r.faceCount===1) MULTI_N=0;
+    if(!r||r.faceCount===0){list=[{key:"face",status:"fail"}];hint=t("h_noface"); if(SW.on) setGuide(t({center:"g1",turn:"g2",tilt:"g3"}[SW.phase]||"g1"),SW.phase==="center"?t("h_noface"):t("gBack"),"◯",0,0,null);}
+    else if(r.faceCount>1&&++MULTI_N>=4){list=[{key:"face",status:"fail",val:r.faceCount}];hint=t("h_multi");}
+    else if(r.faceCount>1){liveBusy=false;return;}
     else{
       const p=r.pts, iodF=Math.hypot(p.pupL.x-p.pupR.x,p.pupL.y-p.pupR.y);
       const roll=Math.abs(Math.atan2((p.pupL.y-p.pupR.y)*vh,(p.pupL.x-p.pupR.x)*vw)*180/Math.PI); const rollN=roll>90?180-roll:roll;
       const L=frameLum(p);
       const st={face:"pass",pose:Math.abs(r.yaw)<0.10?"pass":Math.abs(r.yaw)<0.18?"warn":"fail",tilt:rollN<4?"pass":rollN<8?"warn":"fail",
-        dist:(iodF>0.24&&iodF<0.40)?"pass":(iodF>0.19&&iodF<0.46)?"warn":"fail",light:L.asym<0.10?"pass":L.asym<0.18?"warn":"fail",exp:(L.mean>85&&L.mean<210)?"pass":(L.mean>65&&L.mean<230)?"warn":"fail"};
+        dist:(iodF>0.24&&iodF<0.40)?"pass":(iodF>0.19&&iodF<0.46)?"warn":"fail",light:L.asym<0.15?"pass":L.asym<0.32?"warn":"fail",exp:(L.mean>85&&L.mean<210)?"pass":(L.mean>65&&L.mean<230)?"warn":"fail"};
       if(fr){const dx=Math.abs((p.pupR.x+p.pupL.x)/2-(fr.pupR.x+fr.pupL.x)/2),dy=Math.abs((p.pupR.y+p.pupL.y)/2-(fr.pupR.y+fr.pupL.y)/2),di=Math.abs(iodF/fr.iod-1); if(dx>0.04||dy>0.04||di>0.12) st.dist=st.dist==="pass"?"warn":st.dist;}
       list=Object.keys(st).map(k=>({key:k,status:st[k]}));
-      hint= st.pose!=="pass"?t("h_pose"): st.tilt!=="pass"?t("h_tilt"): st.dist!=="pass"?(fr?t("h_ghost"):iodF<0.24?t("h_far"):t("h_near")): st.light!=="pass"?t("h_light"): st.exp!=="pass"?(L.mean<=85?t("h_dark"):t("h_bright")): t("h_hold");
+      hint= st.pose!=="pass"?t("h_pose"): st.tilt!=="pass"?t("h_tilt"): st.dist!=="pass"?(fr?t("h_ghost"):iodF<0.24?t("h_far"):t("h_near")): st.exp==="fail"?(L.mean<=85?t("h_dark"):t("h_bright")): st.light==="fail"?t("h_lightSoft"): t("h_hold");
       allOk=list.every(c=>c.status==="pass");
       ctx.fillStyle="rgba(255,255,255,.85)";[p.pupR,p.pupL,p.nose,p.mR,p.mL].forEach(q=>{const[a,b]=P(q);ctx.beginPath();ctx.arc(a,b,2.2*devicePixelRatio,0,7);ctx.fill();});
     }
@@ -1228,24 +1272,37 @@ async function liveTick(){
     if(SW.on && r && r.faceCount===1){
       const st=Object.fromEntries(list.map(c=>[c.key,c.status])), now=Date.now(), y=r.yaw, pi=r.pitch||0;
       if(SW.phase==="center"){
-        if(st.pose==="pass"&&st.tilt==="pass"&&st.light!=="fail"&&st.exp!=="fail"&&st.dist!=="fail"&&now-SW.lastFront>220){ const f=grabFrame(); f.yaw=y; SW.fronts.push(f); SW.lastFront=now; }
+        if(Math.abs(y)<0.14&&st.tilt!=="fail"&&st.dist!=="fail"&&st.exp!=="fail"&&now-SW.lastFront>220){ const f=grabFrame(); f.yaw=y; SW.fronts.push(f); SW.lastFront=now; if(SW.fronts.length===4) flashCapture(); }
         if(SW.fronts.length>=4){ SW.phase="turn"; SW.phaseT=now; }
         else hint = SW.fronts.length? t("swHoldFront") : hint;
       } else if(SW.phase==="turn"){
-        if(y>0.22&&y<0.5&&Math.abs(pi)<0.15&&!SW.L) SW.L=Object.assign(grabFrame(),{yaw:y});
-        if(y<-0.22&&y>-0.5&&Math.abs(pi)<0.15&&!SW.R) SW.R=Object.assign(grabFrame(),{yaw:y});
+        if(y>0.22&&y<0.5&&Math.abs(pi)<0.15&&!SW.L){ SW.L=Object.assign(grabFrame(),{yaw:y}); flashCapture(); }
+        if(y<-0.22&&y>-0.5&&Math.abs(pi)<0.15&&!SW.R){ SW.R=Object.assign(grabFrame(),{yaw:y}); flashCapture(); }
         hint=(!SW.L&&!SW.R)?t("swTurn"):!SW.L?t("swTurnOther"):!SW.R?t("swTurnOther"):"";
         if((SW.L&&SW.R)||now-SW.phaseT>14000){ SW.phase="tilt"; SW.phaseT=now; }
       } else if(SW.phase==="tilt"){
-        if(pi<-0.08&&Math.abs(y)<0.15&&!SW.U) SW.U=grabFrame();
-        if(pi>0.08&&Math.abs(y)<0.15&&!SW.D) SW.D=grabFrame();
+        if(pi<-0.08&&Math.abs(y)<0.15&&!SW.U){ SW.U=grabFrame(); flashCapture(); }
+        if(pi>0.08&&Math.abs(y)<0.15&&!SW.D){ SW.D=grabFrame(); flashCapture(); }
         hint=(!SW.U&&!SW.D)?t("swTilt2"):t("swTiltOther");
         if((SW.U&&SW.D)||now-SW.phaseT>9000){ finishSweep(); return; }
       }
+      // big on-video guidance (mirrored preview: subject's left = screen left)
+      const done=(SW.fronts.length>=4?1:SW.fronts.length/4)+((SW.L?1:0)+(SW.R?1:0))/2+((SW.U?1:0)+(SW.D?1:0))/2, prog=done/3, el=(now-SW.phaseT)/1000;
+      if(SW.phase==="center"){ const off=Math.abs(y)>=0.14?t("h_pose"):st.dist==="fail"?(t("h_far")):""; setGuide(t("g1"), off||t("gHold"), off?"":"◉",0,0,prog); hint=st.light==="fail"?t("h_lightSoft"):""; }
+      else if(SW.phase==="turn"){ const goLeft=!SW.L, more=el>6&&Math.abs(y)>0.1&&Math.abs(y)<0.22; setGuide(t("g2"), more?t("gMore"):(goLeft?t("gLeft"):t("gRight")), goLeft?"←":"→", goLeft?-10:10, 0, prog); hint=Math.abs(pi)>=0.15?t("gLevel"):""; }
+      else if(SW.phase==="tilt"){ const goUp=!SW.U; setGuide(t("g3"), goUp?t("gUp"):t("gDown"), goUp?"↑":"↓", 0, goUp?-8:8, prog); hint=""; }
       document.getElementById("hint").textContent=hint; renderSweep(false);
       drawRing(ctx,cw,ch);
     }
   }finally{liveBusy=false;}
+}
+let MULTI_N=0;
+function flashCapture(){ const f=document.getElementById("flash"); f.classList.add("on"); setTimeout(()=>f.classList.remove("on"),60); try{navigator.vibrate&&navigator.vibrate(30);}catch(e){} }
+function setGuide(step,text,icon,nx,ny,prog){
+  const g=document.getElementById("guide"); g.hidden=false;
+  document.getElementById("gStep").textContent=step; document.getElementById("gText").textContent=text;
+  const ic=document.getElementById("gIcon"); ic.textContent=icon||""; ic.style.setProperty("--nx",(nx||0)+"px"); ic.style.setProperty("--ny",(ny||0)+"px");
+  if(prog!=null) document.getElementById("gBar").style.width=Math.round(prog*100)+"%";
 }
 function grabFrame(){
   const vw=video.videoWidth,vh=video.videoHeight,sc=Math.min(1,MAXDIM/Math.max(vw,vh));
@@ -1261,7 +1318,8 @@ function finishSweep(){
   const first=SW.fronts[0]; SW.on=false; stopCamera();
   setPhoto(first.url,first.w,first.h); S.frames=frames;
   document.getElementById("hint").textContent=t("swDone",{f:SW.fronts.length,s:(SW.L?1:0)+(SW.R?1:0)});
-  renderSweep(true);
+  renderSweep(true); flashCapture();
+  const ba=document.getElementById("btnAnalyze"); ba.scrollIntoView({behavior:"smooth",block:"center"});
 }
 function renderSweep(done){
   const el=document.getElementById("sweep"); if(!el) return;
